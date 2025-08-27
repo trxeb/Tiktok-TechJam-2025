@@ -57,6 +57,10 @@ df_ml_alaska['low_quality'] = ((df_ml_alaska['has_url'] == 1) |
                                (df_ml_alaska['review_length'] < 5)).astype(int)
 y_alaska = df_ml_alaska['low_quality'].values
 
+# Save only the cleaned version and relevant columns
+df_cleaned = df_ml_alaska[['clean_text', 'sentiment', 'review_length', 'has_url', 'likely_rant', 'low_quality']]
+df_cleaned.to_csv("cleaned_alaska.csv", index=False)
+
 # Train model
 model = LogisticRegression(max_iter=1000)
 model.fit(X_alaska, y_alaska)
