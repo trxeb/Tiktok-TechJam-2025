@@ -50,7 +50,7 @@ def clean_review_data(df):
     text_columns = ['text', 'resp', 'name']
     for col in text_columns:
         if col in df_clean.columns:
-            df_clean[col] = df_clean[col].fillna('Unknown')
+            df_clean[col] = df_clean[col].fillna('None')
     
     # Handle null pics
     if 'pics' in df_clean.columns:
