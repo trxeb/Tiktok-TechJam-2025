@@ -50,7 +50,7 @@ def clean_review_data(df):
     text_columns = ['text', 'resp', 'name']
     for col in text_columns:
         if col in df_clean.columns:
-            df_clean[col] = df_clean[col].fillna('None')
+            df_clean[col] = df_clean[col].fillna('NONE')
     
     # Handle null pics
     if 'pics' in df_clean.columns:
@@ -62,6 +62,7 @@ def clean_review_data(df):
     
     if 'text' in df_clean.columns:
         df_clean['text_clean'] = df_clean['text'].str.strip()
+        df_clean['text_clean'] = df_clean['text_clean'].str.replace(r'[^A-Za-z0-9\s]', '', regex=True)        
         df_clean['text_clean'] = df_clean['text_clean'].str.replace(r'\s+', ' ', regex=True)
         df_clean['text_length'] = df_clean['text_clean'].str.len()
         df_clean['word_count'] = df_clean['text_clean'].str.split().str.len()
