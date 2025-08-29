@@ -1,3 +1,16 @@
+#Folders
+V1 
+__pycache__
+tiktok_env
+
+#Data cleaning
 googlelocal_reviews_cleaned.csv
 googlelocal_reviews_sample.csv
 review-Wyoming_10.json
+
+#Weak labeling 
+train_final_model.py
+googlelocal_reviews_weakly_labeled
+weak_labels_sample_for_review.csv
+label_distribution.png
+lf_coverage.png
