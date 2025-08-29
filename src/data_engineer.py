@@ -18,24 +18,32 @@ RANT_KEYWORDS = ["never visited", "didn't go", "i heard", "looks", "planning to 
 def load_cleaned_csv(file_path):
     df = pd.read_csv(file_path)
     if "text_clean" in df.columns:
-        return df["text_clean"].tolist()
+        # Ensure all values are strings (replace NaN with "")
+        return df["text_clean"].fillna("").astype(str).tolist()
     else:
         raise ValueError("Column 'text_clean' not found in CSV")
 
 # --- Numeric & binary features --- #
 def link_presence(text):
+    if not isinstance(text, str) or text.strip() == "":
+        return 0
     return int(bool(re.search(r"http\S+|www\S+", text)))
 
+
 def uppercase_ratio(text):
-    if len(text) == 0:
-        return 0
+    if not isinstance(text, str) or len(text) == 0:
+        return 0.0
     upper_chars = sum(1 for c in text if c.isupper())
     return upper_chars / len(text)
 
 def review_length(text):
+    if not isinstance(text, str):
+        return 0
     return len(text)
 
 def pos_counts(text):
+    if not isinstance(text, str) or text.strip() == "":
+        return 0, 0
     doc = nlp(text)
     noun_count = sum(1 for token in doc if token.pos_ == "NOUN")
     adj_count = sum(1 for token in doc if token.pos_ == "ADJ")
@@ -52,6 +60,9 @@ def tfidf_features(texts, keywords):
 def avg_keyword_embedding(texts, keywords):
     all_embeddings = []
     for text in tqdm(texts, desc="Computing keyword embeddings"):
+        if not isinstance(text, str):
+            all_embeddings.append(np.zeros(sbert_model.get_sentence_embedding_dimension()))
+            continue
         found_kw = [kw for kw in keywords if kw in text.lower()]
         if found_kw:
             emb = sbert_model.encode(found_kw, show_progress_bar=False)
