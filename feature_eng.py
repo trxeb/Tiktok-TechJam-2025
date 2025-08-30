@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
 import time
+import joblib
 
 def main():
     print("🚀 Starting TF-IDF Feature Engineering")
@@ -96,6 +97,12 @@ def main():
         index=[f'svd_component_{i}' for i in range(10)]
     )
     component_df.to_csv("svd_top_components.csv")
+    
+    # Save vectorizer objects for inference
+    print("💾 Saving vectorizer objects...")
+    joblib.dump(tfidf, 'tfidf_vectorizer.pkl')
+    joblib.dump(svd, 'svd_transformer.pkl')
+    print("✅ Vectorizer and SVD transformer saved!")
     
     # ----------------------------
     # 6. Analysis and Visualization

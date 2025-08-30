@@ -24,3 +24,12 @@ confusion_matrix.png
 gold_set_done_trixie.csv
 promotion_precision_recall.png
 review_classifier_model.pkl
+
+#Gold set eval
+Gold Set Eval
+
+#Vectoriser
+tfidf_vocabulary.csv
+tfidf_vectorizer.pkl
+svd_transformer.pkl
+svd_top_components.csv
