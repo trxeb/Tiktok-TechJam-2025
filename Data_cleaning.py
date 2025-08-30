@@ -218,10 +218,6 @@ def main():
     output_file = "googlelocal_reviews_cleaned.csv"
     cleaned_df.to_csv(output_file, index=False)
     print(f"\nCleaned data saved to: {output_file}")
-
-    sample_file = "googlelocal_reviews_sample.csv"
-    cleaned_df.head(1000).to_csv(sample_file, index=False)
-    print(f"Sample data saved to: {sample_file}")
     
     # Save a sample for quick inspection
     sample_file = "googlelocal_reviews_sample.csv"
