@@ -13,7 +13,7 @@ def main():
     # 1. Load Gold Set Data
     # ----------------------------
     print("📂 Loading gold set data...")
-    gold_df = pd.read_csv("gold_set_labeled.csv")  # Replace with your gold set path
+    gold_df = pd.read_csv("Gold Set Eval\gold_set_labeled.csv")  # Replace with your gold set path
     gold_df["text_clean"] = gold_df["text_clean"].fillna("").astype(str)
     
     # Remove any empty texts
@@ -28,9 +28,9 @@ def main():
         model = joblib.load('review_classifier_model.pkl')
         tfidf = joblib.load('tfidf_vectorizer.pkl')
         svd = joblib.load('svd_transformer.pkl')
-        print("✅ All components loaded successfully!")
+        print("All components loaded successfully!")
     except FileNotFoundError as e:
-        print(f"❌ Error loading files: {e}")
+        print(f"Error loading files: {e}")
         return
     
     # ----------------------------
@@ -62,7 +62,7 @@ def main():
     # ----------------------------
     # 5. Evaluate Performance
     # ----------------------------
-    print("📊 Evaluating performance...")
+    print("Evaluating performance...")
     
     label_names = {
         0: "GENUINE", 
@@ -142,11 +142,11 @@ def main():
     # 8. Final Summary
     # ----------------------------
     overall_accuracy = np.mean(y_pred == y_true)
-    print(f"\n🎯 FINAL SUMMARY:")
+    print(f"\n FINAL SUMMARY:")
     print(f"   Overall accuracy: {overall_accuracy:.4f}")
     print(f"   Gold set size: {len(y_true):,} samples")
     print(f"   Model: Random Forest")
-    print(f"   Evaluation complete! 🎉")
+    print(f"   Evaluation complete!")
 
 if __name__ == "__main__":
     main()

@@ -11,12 +11,12 @@ from imblearn.over_sampling import SMOTE
 from collections import Counter
 
 def main():
-    print("🤖 Training Classification Model")
+    print("Training Classification Model")
     
     # ----------------------------
     # Load features
     # ----------------------------
-    print("📂 Loading features...")
+    print("Loading features...")
     features_df = pd.read_csv("Feature Eng/googlelocal_reviews_tfidf_features.csv")
     
     # Prepare data
@@ -28,7 +28,7 @@ def main():
     X = X[keep_mask]
     y = y[keep_mask]
     
-    print(f"📊 Training on {X.shape[0]:,} samples with {X.shape[1]} features")
+    print(f"Training on {X.shape[0]:,} samples with {X.shape[1]} features")
     print("Original class distribution:", Counter(y))
     
     # ----------------------------
@@ -57,7 +57,7 @@ def main():
     # ----------------------------
     # Train Random Forest
     # ----------------------------
-    print("🌲 Training Random Forest...")
+    print("Training Random Forest...")
     rf_model = RandomForestClassifier(
         n_estimators=200,        # more trees for stability
         max_depth=25,           # slightly deeper tree
@@ -72,7 +72,7 @@ def main():
     # ----------------------------
     # Evaluate Model
     # ----------------------------
-    print("📊 Evaluating model...")
+    print("Evaluating model...")
     y_pred = rf_model.predict(X_test)
     
     label_names = {
@@ -118,14 +118,14 @@ def main():
     # ----------------------------
     # Save Model
     # ----------------------------
-    print("💾 Saving model...")
+    print("Saving model...")
     joblib.dump(rf_model, 'review_classifier_model.pkl')
-    print("✅ Model saved as: review_classifier_model.pkl")
+    print("Model saved as: review_classifier_model.pkl")
     
     # ----------------------------
     # Cross-Validation Scores
     # ----------------------------
-    print("📈 Running cross-validation...")
+    print("    Running cross-validation...")
     cv_scores = cross_val_score(rf_model, X_res, y_res, cv=3, n_jobs=-1)
     print(f"   Cross-validation scores: {cv_scores}")
     print(f"   Mean CV accuracy: {cv_scores.mean():.3f} (±{cv_scores.std():.3f})")

@@ -29,5 +29,5 @@ def predict_review(text):
 
 if __name__ == "__main__":
     # Example usage
-    sample = "Promotion at cheap deals"
+    sample = "The food was good today"
     predict_review(sample)
