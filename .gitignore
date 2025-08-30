@@ -7,10 +7,20 @@ tiktok_env
 googlelocal_reviews_cleaned.csv
 googlelocal_reviews_sample.csv
 review-Wyoming_10.json
+meta-Wyoming.json
 
 #Weak labeling 
 train_final_model.py
-googlelocal_reviews_weakly_labeled
-weak_labels_sample_for_review.csv
 label_distribution.png
 lf_coverage.png
+googlelocal_reviews_weakly_labeled.csv
+weak_labels_sample_for_review.csv
+
+#Feature Eng
+Feature Eng
+
+#the rest
+confusion_matrix.png
+gold_set_done_trixie.csv
+promotion_precision_recall.png
+review_classifier_model.pkl

@@ -5,6 +5,40 @@ from tqdm import tqdm
 import re
 from datetime import datetime
 import os
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import FunctionTransformer, StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, precision_recall_curve
+import joblib
+import json
+import gzip
+
+def read_meta(path):
+    """Load meta JSON or JSON.gz with gmap_id and categories; ensure one row per gmap_id."""
+    open_fn = gzip.open if str(path).endswith(".gz") else open
+    rows = []
+    with open_fn(path, "rt", encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            obj = json.loads(line)
+            gmap_id = obj.get("gmap_id")
+            cats = obj.get("category") or []
+            if isinstance(cats, str):
+                cats = [cats]
+            rows.append({
+                "gmap_id": gmap_id,
+                "category_all": ";".join(cats) if cats else "",
+                "category_primary": cats[0] if cats else ""
+            })
+    meta = pd.DataFrame(rows)
+    # ensure uniqueness (keep the first record per gmap_id)
+    if not meta.empty and "gmap_id" in meta.columns:
+        meta = meta.drop_duplicates(subset=["gmap_id"], keep="first")
+    return meta
 
 # Load the JSON Lines file
 def load_jsonl_file(file_path):
@@ -50,7 +84,7 @@ def clean_review_data(df):
     text_columns = ['text', 'resp', 'name']
     for col in text_columns:
         if col in df_clean.columns:
-            df_clean[col] = df_clean[col].fillna('None')
+            df_clean[col] = df_clean[col].fillna('NONE')
     
     # Handle null pics
     if 'pics' in df_clean.columns:
@@ -62,8 +96,8 @@ def clean_review_data(df):
     
     if 'text' in df_clean.columns:
         df_clean['text_clean'] = df_clean['text'].str.strip()
-        df_clean['text_clean'] = df_clean['text_clean'].str.replace(r'[^A-Za-z0-9\s]', '', regex=True)        
         df_clean['text_clean'] = df_clean['text_clean'].str.replace(r'\s+', ' ', regex=True)
+        df_clean['text_clean'] = df_clean['text_clean'].str.replace(r'[^A-Za-z0-9\s]', '', regex=True)
         df_clean['text_length'] = df_clean['text_clean'].str.len()
         df_clean['word_count'] = df_clean['text_clean'].str.split().str.len()
     
@@ -144,16 +178,26 @@ def analyze_data(df):
 # Main execution
 def main():
     # Update this path to your actual file location
-    file_path = "review-Wyoming_10.json"  # or whatever your file is called
+    reviews_path = "Data Cleaning\review-Wyoming_10.json"   
+    meta_path    = "Data Cleaning\meta-Wyoming.json"
     
-    if not os.path.exists(file_path):
-        print(f"File not found: {file_path}")
-        print("Please update the file_path variable to point to your downloaded file")
+    if not os.path.exists(reviews_path):
+        print(f"File not found: {reviews_path}")
         return
-    
+    if not os.path.exists(meta_path):
+        print(f"Meta not found: {meta_path}")
+        return
+
     # Load the data
-    df = load_jsonl_file(file_path)
-    
+    df = load_jsonl_file(reviews_path)
+
+    # --- NEW: merge categories BEFORE cleaning ---
+    meta_df = read_meta(meta_path)
+    if "gmap_id" in df.columns and not meta_df.empty:
+        df = df.merge(meta_df, on="gmap_id", how="left")
+        # if your raw has accidental dup rows, dedupe here too
+        df = df.drop_duplicates(subset=["gmap_id","user_id","time","text"], keep="first")
+
     # Show initial data info
     print("\nInitial data info:")
     print(f"Shape: {df.shape}")
@@ -162,14 +206,15 @@ def main():
     print(df.dtypes)
     print("\nMissing values:")
     print(df.isnull().sum())
-    
-    # Clean the data
+
+    # Clean the data (this will keep category_* columns untouched)
     cleaned_df = clean_review_data(df)
-    
-    # Analyze cleaned data
+
+    # --- OPTIONAL: final dedupe after cleaning just to be safe ---
+    cleaned_df = cleaned_df.drop_duplicates(subset=["gmap_id","user_id","time","text_clean"], keep="first")
+
+    # Analyze & save
     analyze_data(cleaned_df)
-    
-    # Save cleaned data
     output_file = "googlelocal_reviews_cleaned.csv"
     cleaned_df.to_csv(output_file, index=False)
     print(f"\nCleaned data saved to: {output_file}")
@@ -181,4 +226,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
