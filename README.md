@@ -44,4 +44,4 @@ The script will:
 - Extract features from dataset
 - Evaluate and compute relevant metrics
 - Saved evaluation results
-- Create visualisations (`mlp_gold_set_confusion_matrix.png`)
+- Create visualisations (eg. `mlp_gold_set_confusion_matrix.png`)
