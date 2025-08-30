@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Import your labeling functions
-from labelling_functions import lfs, ABSTAIN, GENUINE, PROMOTION, IRRELEVANT, RANT
+from labeling_functions import lfs, ABSTAIN, GENUINE, PROMOTION, IRRELEVANT, RANT
 
 def main():
     # ----------------------------
